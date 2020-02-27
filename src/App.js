@@ -1,26 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import axios from 'axios';
+// import Counter from './Counter.js';
+// import Header from './Header.js'
+import Art from './Art.js'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      art: [],
+      isLoading: true
+    }
+  }
+
+  componentDidMount() {
+    console.log('i be mounted');
+    axios({
+      method: 'GET',
+      url: 'https://www.rijksmuseum.nl/api/en/collection',
+      responseType: 'json',
+      params: {
+        key: 'F9z3jtlN',
+        format: 'json'
+      }
+    }).then((response)=>{
+      this.setState({art: response.data.artObjects, isLoading: false});
+
+    });
+  }
+
+  render() {
+    return (
+      <div className="App">
+        {this.state.isLoading ? <p>it's loadin boi</p> : this.state.art.map((artObject) => {
+          return(
+            <Art key={artObject.id} image={artObject.webImage.url} title={artObject.title}/>
+          );
+        })}
+        {/* <Header />
+        <Counter /> */}
+      </div>
+    );
+  }
 }
 
 export default App;
